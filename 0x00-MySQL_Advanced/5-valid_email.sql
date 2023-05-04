@@ -1,4 +1,4 @@
--- a trggier that manages the inventory
+-- a trggier that resets value of valid_email if email changes
 DELIMITER //
 CREATE TRIGGER email BEFORE UPDATE ON users
 FOR EACH ROW

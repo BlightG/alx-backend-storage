@@ -2,7 +2,7 @@
 SELECT band_name,
 IF (
     split IS NULL,
-    (SELECT YEAR(CURDATE()) AS current_year) - formed,
+    2021 - formed,
     split - formed) AS lifespan
 FROM metal_bands
 WHERE style LIKE '%Glam rock%'

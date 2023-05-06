@@ -2,4 +2,5 @@
 -- ALTER TABLE names
 -- ADD COLUMN first_letter VARCHAR(1) AS (SUBSTRING(name, 1, 1)) STORED;
 -- CREATE INDEX idx_name_first ON names (first_letter);
-CREATE INDEX idx_name_first ON names (SUBSTR(name, 1, 1));
+-- CREATE INDEX idx_name_first ON names (name(1));
+ALTER TABLE names ADD INDEX idx_name_first (name(1));

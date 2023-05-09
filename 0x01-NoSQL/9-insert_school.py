@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" a module for the  function """
+""" a module for the  insert_school function """
 
 
 def insert_school(mongo_collection, **kwargs):

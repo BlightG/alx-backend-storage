@@ -19,3 +19,19 @@ class Cache:
         self._redis.set(id, data)
         return id
 
+    def get(self, key: str, fn):
+        """ a get method """
+        if fn == str:
+            return self.get_str(self._redis.get(key))
+        if fn == int or fn == float:
+            return self.get_int(self._redis.get(key))
+        return self._redis.get(key)
+
+    def get_str(self, data):
+        """ a get_str method """
+        return str(data)
+
+    def get_int(self, data):
+        """ a get_int method """
+        return int(data)
+

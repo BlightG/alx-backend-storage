@@ -14,9 +14,24 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    def call_history(method: Callable) -> Callable:
+        """ input and output list """
+        input_key = f'{method.__qualname__}:inputs'
+        output_key = f'{method.__qualname__}:outputs'
+
+        @wraps(method)
+        def wrapper(*args, **kwargs) -> Callable:
+            """ returns a wraped function """
+            self = args[0]
+            self._redis.rpush(input_key, str(args[1]))
+            self._redis.rpush(output_key, str(method(self, args[1])))
+            return method(*args, *kwargs)
+        return wrapper
+
     def count_calls(method: Callable) -> Callable:
-        """ wrapper """
+        """ wraps store and used to conut """
         key = method.__qualname__
+        # print(key)
 
         @wraps(method)
         def wrapper(*args, **kwargs):
@@ -27,6 +42,7 @@ class Cache:
         return wrapper
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ a method that takes a data argument and returns a string. """
         id = f'{uuid.uuid4()}'
@@ -49,4 +65,3 @@ class Cache:
     def get_int(self, data):
         """ a get_int method """
         return self.get(data, int)
-

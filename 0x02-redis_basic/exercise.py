@@ -65,3 +65,12 @@ class Cache:
     def get_int(self, data):
         """ a get_int method """
         return self.get(data, int)
+
+    def replay(self):
+        """ replays sequence of events """
+        print(f'Cache.store was called {int(self.get("Cache.store"))} times:')
+        # in_list = self._redis.lrange('Cache.store:inputs', 0, -1)
+        # in_list = map(str, in_list)
+        out_list = self._redis.lrange('Cache.store:outputs', 0, -1)
+        for i in range(len(out_list)):
+            print(f'Cache.store(*({self.get(out_list[i]).decode("utf-8")},)) -> {out_list[i].decode("utf-8")}')

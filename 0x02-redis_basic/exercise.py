@@ -49,7 +49,9 @@ class Cache:
         self._redis.set(id, data)
         return id
 
-    def get(self, key: str, fn: Optional[Callable[[Union[str, bytes]], Union[str, bytes, int, float]]] = None) -> Union[str, bytes, int, float]:
+    def get(self, key: str, fn: Optional[Callable[[Union[str, bytes]],
+            Union[str, bytes, int, float]]] = None)\
+            -> Union[str, bytes, int, float]:
         """ a get method """
         data = self._redis.get(key)
         if data is None:
@@ -73,4 +75,5 @@ class Cache:
         # in_list = map(str, in_list)
         out_list = self._redis.lrange('Cache.store:outputs', 0, -1)
         for i in range(len(out_list)):
-            print(f'Cache.store(*({self.get(out_list[i]).decode("utf-8")},)) -> {out_list[i].decode("utf-8")}')
+            print(f'Cache.store(*({self.get(out_list[i]).decode("utf-8")},))' +
+                  f' -> {out_list[i].decode("utf-8")}')

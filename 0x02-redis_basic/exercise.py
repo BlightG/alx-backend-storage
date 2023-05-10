@@ -2,7 +2,7 @@
 """ a moudle for the class Cache """
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable
 
 
 class Cache:
@@ -19,8 +19,9 @@ class Cache:
         self._redis.set(id, data)
         return id
 
-    def get(self, key: str, fn):
+    def get(self, key: str, fn=None:Callable[[Union[float, int, str]] int | str] ) -> Union[int, float, bytes, str]:
         """ a get method """
+        print(f'fn = {fn}')
         if fn == str:
             return self.get_str(self._redis.get(key))
         if fn == int or fn == float:

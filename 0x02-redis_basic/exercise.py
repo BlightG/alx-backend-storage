@@ -23,8 +23,8 @@ class Cache:
         def wrapper(*args, **kwargs) -> Callable:
             """ returns a wraped function """
             self = args[0]
-            self._redis.rpush(input_key, str(args[1]))
-            self._redis.rpush(output_key, str(method(self, args[1])))
+            self._redis.rpush(input_key, f"({args[1]},)")
+            self._redis.rpush(output_key, method(self, args[1]))
             return method(*args, *kwargs)
         return wrapper
 

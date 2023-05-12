@@ -6,6 +6,29 @@ from functools import wraps
 from typing import Union, Callable, Optional
 
 
+def replay(method: Callable):
+    """ replays sequence of events """
+    r = redis.Redis()
+    func_name = method.__qualname__
+    c = r.get(func_name)
+    try:
+        c = int(c.decode("utf-8"))
+    except Exception:
+        c = 0
+    print("{} was called {} times:".format(func_name, c))
+    inputs = r.lrange("{}:inputs".format(func_name), 0, -1)
+    outputs = r.lrange("{}:outputs".format(func_name), 0, -1)
+    for inp, outp in zip(inputs, outputs):
+        try:
+            inp = inp.decode("utf-8")
+        except Exception:
+            inp = ""
+        try:
+            outp = outp.decode("utf-8")
+        except Exception:
+            outp = ""
+        print("{}(*{}) -> {}".format(func_name, inp, outp))
+
 class Cache:
     """ a class to cahce input """
 
@@ -45,7 +68,7 @@ class Cache:
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ a method that takes a data argument and returns a string. """
-        id = f'{uuid.uuid4()}'
+        id = str(uuid.uuid4())
         self._redis.set(id, data)
         return id
 
@@ -67,13 +90,3 @@ class Cache:
     def get_int(self, data):
         """ a get_int method """
         return self.get(data, int)
-
-    def replay(self):
-        """ replays sequence of events """
-        print(f'Cache.store was called {int(self.get("Cache.store"))} times:')
-        # in_list = self._redis.lrange('Cache.store:inputs', 0, -1)
-        # in_list = map(str, in_list)
-        out_list = self._redis.lrange('Cache.store:outputs', 0, -1)
-        for i in range(len(out_list)):
-            print(f'Cache.store(*({self.get(out_list[i]).decode("utf-8")},))' +
-                  f' -> {out_list[i].decode("utf-8")}')

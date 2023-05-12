@@ -6,7 +6,7 @@ from functools import wraps
 from typing import Union, Callable, Optional
 
 
-def replay(method: Callable):
+def replay(method: Callable) -> Callable:
     """ replays sequence of events """
     r = redis.Redis()
     func_name = method.__qualname__
@@ -28,6 +28,7 @@ def replay(method: Callable):
         except Exception:
             outp = ""
         print("{}(*{}) -> {}".format(func_name, inp, outp))
+
 
 class Cache:
     """ a class to cahce input """
